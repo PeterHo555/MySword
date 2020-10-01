@@ -11,9 +11,11 @@ public class MainTest {
 //        };
 //
 //        sword4.findNumberIn2DArray(test4,5);
-        Sword53_1 sword53_1 = new Sword53_1();
-        int[] test53_1 = new int[]{5,7,7,8,8,10};
-        sword53_1.search(new int[]{1}, 1 );
+//        Sword53_1 sword53_1 = new Sword53_1();
+//        int[] test53_1 = new int[]{5,7,7,8,8,10};
+//        sword53_1.search(new int[]{1}, 1 );
 
+        Sword50 sword50 = new Sword50();
+        sword50.firstUniqChar("leetcode");
     }
 }
