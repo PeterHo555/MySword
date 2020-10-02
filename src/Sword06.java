@@ -1,4 +1,4 @@
-public class Sword6 {
+public class Sword06 {
     public int[] reversePrint(ListNode head) {
         ListNode node = head;
         // 先计算链表长度

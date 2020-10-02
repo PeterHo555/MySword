@@ -1,4 +1,4 @@
-public class Sword3 {
+public class Sword03 {
     public int findRepeatNumber(int[] nums) {
         int len = nums.length;
         boolean[] flag = new boolean[len];
