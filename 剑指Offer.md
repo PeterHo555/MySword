@@ -50,6 +50,25 @@ class Solution {
 
 
 
+#### 剑指Offer 05（替换空格）
+
+```java
+class Solution {
+    public String replaceSpace(String s) {
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == ' ')
+                stringBuffer.append("%20");
+            else
+                stringBuffer.append(s.charAt(i));
+        }
+        return stringBuffer.toString();
+    }
+}
+```
+
+
+
 #### 剑指Offer 06 
 
 ```java
@@ -77,7 +96,88 @@ class Solution {
 #### 剑指Offer 07（重构二叉树）
 
 ```java
+// 不会，没理解
+class Solution {
+    //利用原理,先序遍历的第一个节点就是根。在中序遍历中通过根 区分哪些是左子树的，哪些是右子树的
+    //左右子树，递归
+    HashMap<Integer, Integer> map = new HashMap<>();//标记中序遍历
+    int[] preorder;//保留的先序遍历
 
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        this.preorder = preorder;
+        for (int i = 0; i < preorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+        return recursive(0,0,inorder.length - 1);
+    }
+
+     /**
+     * @param pre_root_idx  先序遍历的索引
+     * @param in_left_idx  中序遍历的索引
+     * @param in_right_idx 中序遍历的索引
+     */
+    public TreeNode recursive(int pre_root_idx, int in_left_idx, int in_right_idx) {
+        //相等就是自己
+        if (in_left_idx > in_right_idx) {
+            return null;
+        }
+        //root_idx是在先序里面的
+        TreeNode root = new TreeNode(preorder[pre_root_idx]);
+        // 有了先序的,再根据先序的，在中序中获 当前根的索引
+        int idx = map.get(preorder[pre_root_idx]);
+
+        //左子树的根节点就是 左子树的(前序遍历）第一个，就是+1,左边边界就是left，右边边界是中间区分的idx-1
+        root.left = recursive(pre_root_idx + 1, in_left_idx, idx - 1);
+
+        //由根节点在中序遍历的idx 区分成2段,idx 就是根
+
+        //右子树的根，就是右子树（前序遍历）的第一个,就是当前根节点 加上左子树的数量
+        // pre_root_idx 当前的根  左子树的长度 = 左子树的左边-右边 (idx-1 - in_left_idx +1) 。最后+1就是右子树的根了
+        root.right = recursive(pre_root_idx + (idx-1 - in_left_idx +1)  + 1, idx + 1, in_right_idx);
+        return root;
+    }
+}
+
+```
+
+
+
+#### 剑指Offer 10-1 （斐波那契数列）
+
+```java
+// 别读错题，要模的
+class Solution {
+    public int fib(int n) {
+        if (n == 0 || n == 1) return n;
+        int[] dp = new int[n + 1];
+        dp[0] = 0;
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = (dp[i - 1] + dp[i - 2]) % 1000000007;
+        }
+        return dp[n];
+    }
+}
+```
+
+
+
+#### 剑指Offer 10-2（青蛙跳台阶）
+
+```java
+// 斐波那契小改
+class Solution {
+    public int numWays(int n) {
+        if (n == 0 || n == 1) return 1;
+        int[] dp = new int[n + 1];
+        dp[0] = 1;
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = (dp[i - 1] + dp[i - 2]) % 1000000007;
+        }
+        return dp[n];
+    }
+}
 ```
 
 
@@ -126,6 +226,24 @@ class Solution {
         // 下一步要return，所以要除去访问标记
         vis[r][c] = false;
         return false;
+    }
+}
+```
+
+
+
+#### 剑指Offer 18（打印数组）*
+
+```java
+// 这个太简单，考虑一下大数问题
+class Solution {
+    public int[] printNumbers(int n) {
+        int limit = (int) Math.pow(10, n) - 1;
+        int[] ans = new int[limit];
+        for (int i = 0; i < limit; i++) {
+            ans[i] = i + 1;
+        }
+        return ans;
     }
 }
 ```
@@ -201,10 +319,21 @@ class Solution {
 
 
 
-#### 剑指Offer 26（树的子结构）
+#### 剑指Offer 26（树的子结构）*
 
 ```java
-
+// 自己写不出啊
+class Solution {
+    public boolean isSubStructure(TreeNode A, TreeNode B) {
+        if(A == null || B == null) return false;
+        return dfs(A, B) || isSubStructure(A.left, B) || isSubStructure(A.right, B);
+    }
+    public boolean dfs(TreeNode A, TreeNode B){
+        if(B == null) return true;
+        if(A == null) return false;
+        return A.val == B.val && dfs(A.left, B.left) && dfs(A.right, B.right);
+    }
+}
 ```
 
 
@@ -493,7 +622,42 @@ class Solution {
 #### 剑指Offer 37（序列化二叉树）
 
 ```java
+// 不会
+```
 
+
+
+#### 剑指Offer 38（不重复全排列）
+
+```java
+class Solution {
+    List<String> res = new ArrayList<>();
+    char[] c;
+    public String[] permutation(String s) {
+        c = s.toCharArray();
+        dfs(0);
+        return res.toArray(new String[res.size()]);
+    }
+    void dfs(int x) {
+        if(x == c.length - 1) {
+            res.add(String.valueOf(c)); // 添加排列方案
+            return;
+        }
+        HashSet<Character> set = new HashSet<>();
+        for(int i = x; i < c.length; i++) {
+            if(set.contains(c[i])) continue; // 重复，因此剪枝
+            set.add(c[i]);
+            swap(i, x); // 交换，将 c[i] 固定在第 x 位
+            dfs(x + 1); // 开启固定第 x + 1 位字符
+            swap(i, x); // 恢复交换
+        }
+    }
+    void swap(int a, int b) {
+        char tmp = c[a];
+        c[a] = c[b];
+        c[b] = tmp;
+    }
+}
 ```
 
 
@@ -758,6 +922,62 @@ class Solution {
         if (root == null)
             return 0;
         return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
+    }
+}
+```
+
+
+
+#### 剑指Offer57 
+
+```java
+// 本题是有序的，可优化。可用双指针
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        // 用 HashMap 存储数组元素和索引的映射，
+        // 在访问到 nums[i] 时，判断 HashMap 中是否存在 target - nums[i]，
+        HashMap<Integer, Integer> indexForNum = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (indexForNum.containsKey(target - nums[i])) {
+                return new int[]{target - nums[i], nums[i]};
+            } else {
+                indexForNum.put(nums[i], i);
+            }
+        }
+        return null;
+    }
+}
+```
+
+
+
+#### 剑指Offer 58-1（翻转单词顺序）
+
+```java
+class Solution {
+    public String reverseWords(String s) {
+        String[] strings = s.trim().split(" "); // 删除首尾空格，分割字符串
+        StringBuilder res = new StringBuilder();
+        for(int i = strings.length - 1; i >= 0; i--) { // 倒序遍历单词列表
+            if(strings[i].equals("")) continue; // 遇到空单词则跳过
+            res.append(strings[i] + " "); // 将单词拼接至 StringBuilder
+        }
+        return res.toString().trim(); // 转化为字符串，删除尾部空格，并返回
+    }
+}
+```
+
+
+
+#### 剑指Offer 58-2（左旋转字符串）
+
+```java
+class Solution {
+    public String reverseLeftWords(String s, int n) {
+        StringBuilder ans = new StringBuilder();
+        ans.append(s.substring(n, s.length()));
+        ans.append(s.substring(0, n));
+        return ans.toString();
     }
 }
 ```
