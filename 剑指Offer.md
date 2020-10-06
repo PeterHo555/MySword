@@ -1,10 +1,25 @@
-## 剑指Offer笔记
+### 剑指Offer笔记
+
+----
+
+>作者：**Peter Ho**
+>
+>完结日期：**2020年10月6日**
+>
+>说明：**本笔记记录了作者在刷《剑指Offer》题目过程中的心得体会以及代码注释的整理，便于后续复习，需结合Leetcode的剑指Offer题目使用。**
+>
+>相关链接：**[LeetCode](https://leetcode-cn.com/problemset/lcof/)**  、  **[牛客网](https://www.nowcoder.com/ta/coding-interviews)**
+
+----
 
 [toc]
 
-#### 剑指Offer 03
+---
+
+#### 剑指Offer 03（数组中的重复数字）
 
 ```java
+// 只用了访问标记数组，思路简单
 class Solution {
     public int findRepeatNumber(int[] nums) {
         int len = nums.length;
@@ -23,7 +38,7 @@ class Solution {
 
 
 
-#### 剑指Offer 04
+#### 剑指Offer 04（二维数组的查找）
 
 ```java
 // 站在右上角看。这个矩阵其实就像是一个Binary Search Tree。然后，聪明的大家应该知道怎么做了。
@@ -53,6 +68,7 @@ class Solution {
 #### 剑指Offer 05（替换空格）
 
 ```java
+// 写得有点简单了
 class Solution {
     public String replaceSpace(String s) {
         StringBuffer stringBuffer = new StringBuffer();
@@ -69,7 +85,7 @@ class Solution {
 
 
 
-#### 剑指Offer 06 
+#### 剑指Offer 06（从头到尾打印链表）
 
 ```java
 // 注意边界值就好
@@ -142,7 +158,40 @@ class Solution {
 
 
 
-#### 剑指Offer 10-1 （斐波那契数列）
+#### 剑指Offer 09（用两个栈实现队列）
+
+```Java
+// 很简单的思路，但只击败10%
+class CQueue {
+    Stack<Integer> mainQueue;
+    Stack<Integer> temp;
+
+    public CQueue() {
+        mainQueue = new Stack<>();
+        temp = new Stack<>();
+    }
+    public void appendTail(int value) {
+        while (!mainQueue.isEmpty()){
+            temp.push(mainQueue.pop());
+        }
+        mainQueue.push(value);
+        while (!temp.isEmpty()){
+            mainQueue.push(temp.pop());
+        }
+    }
+
+    public int deleteHead() {
+        if(mainQueue.isEmpty()){
+            return -1;
+        }
+        return mainQueue.pop();
+    }
+}
+```
+
+
+
+#### 剑指Offer 10-1（斐波那契数列）
 
 ```java
 // 别读错题，要模的
@@ -182,7 +231,38 @@ class Solution {
 
 
 
-#### 剑指Offer 12 （矩阵单词查找）
+#### 剑指Offer 11（旋转数组中的最小数字）
+
+```java
+// 无语
+class Solution {
+    public int minArray(int[] numbers) {
+        Arrays.sort(numbers);
+        return numbers[0];
+    }
+}
+// 二分法
+class Solution {
+    public int minArray(int[] numbers) {
+        int l = 0, r = numbers.length - 1;
+        while (l < r) {
+            int mid = ((r - l) >> 1) + l;
+            //只要右边比中间大，那右边一定是有序数组
+            if (numbers[r] > numbers[mid]) {
+                r = mid;
+            } else if (numbers[r] < numbers[mid]) {
+                l = mid + 1;
+             //去重
+            } else r--;
+        }
+        return numbers[l];
+    }
+}
+```
+
+
+
+#### 剑指Offer 12（矩阵单词查找）
 
 ```java
 class Solution {
@@ -232,7 +312,164 @@ class Solution {
 
 
 
-#### 剑指Offer 18（打印数组）*
+#### 剑指Offer 13（机器人的运动范围）
+
+```java
+class Solution {
+    boolean[][] visit;
+    public int movingCount(int m, int n, int k) {
+        // 第一步：先明确递归参数
+        // 第二步：明确递归终止条件
+        visit = new boolean[m][n];
+        return dfs(0, 0, m, n, k);
+    }
+
+    private int dfs(int row, int col, int m, int n, int k) {
+        // 第一步：先明确递归参数
+        int a = sums(row);
+        int b = sums(col);
+        // 第二步：明确递归终止条件
+        // 边界判断、位数和与k比较、当前点是否访问过
+        if (row < 0 || row >= m || col < 0 || col >= n || k < a + b || visit[row][col]) {
+            return 0;
+        }
+        // 第三步：递推工作
+        visit[row][col] = true;
+        return 1 + dfs(row + 1, col, m, n, k) + dfs(row, col + 1, m, n, k);
+    }
+
+    // 位数之和计算
+    private int sums(int num) {
+        int sums = 0;
+        while (num != 0) {
+            sums += num % 10;
+            num = num / 10;
+        }
+        return sums;
+    }
+}
+```
+
+
+
+#### 剑指Offer 14-1（剪绳子1）
+
+```java
+// 动态规划
+class Solution {
+    public int cuttingRope(int n) {
+        int[] dp = new int[n + 1];
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++)
+            for (int j = 1; j < i; j++)
+                dp[i] = Math.max(dp[i], Math.max(j * (i - j), dp[j] * (i - j)));
+        return dp[n];
+    }
+}
+//递归，反而更快
+class Solution {
+    public int cuttingRope(int n) {
+        if(n == 2) return 1;
+        if(n == 3) return 2;
+        if(n == 4) return 4;
+        if(n == 5) return 6;
+        if(n == 6) return 9;
+        return 3 * cuttingRope(n - 3);
+    }
+}
+```
+
+
+
+#### 剑指Offer 14-2（剪绳子2）*
+
+```java
+// 再看看吧
+class Solution {
+    public int cuttingRope(int n) {
+        if(n <= 3) return n - 1;
+        long res = 1L;
+        int p = (int) 1e9+7;
+        //贪心算法，优先切三，其次切二
+        while(n>4){
+            res = res * 3 % p;
+            n -= 3;
+        }
+        //出来循环只有三种情况，分别是n=2、3、4
+        return (int)(res * n % p);
+    }
+}
+```
+
+
+
+#### 剑指Offer 15（二进制中 1 的个数）
+
+```java
+// 位运算
+class Solution {
+    // you need to treat n as an unsigned value
+    public int hammingWeight(int n) {
+        int count = 0;
+        while (n != 0) {
+            // 如果是0结尾，向前借1，就会导致‘与’运算之后相较于运算之前相比少一个1，如果是1同样也导致运算之后相较于运算之前少一个1。循环往复。
+            count += n & 1;
+            n = n >>> 1;
+        }
+        return count;
+    }
+}
+
+class Solution {
+    // you need to treat n as an unsigned value
+    public int hammingWeight(int n) {
+        return Integer.bitCount(n);
+    }
+}
+```
+
+
+
+#### 剑指Offer 16（数值的整数次方）
+
+```java
+// CV大法
+// 递归
+class Solution {
+    public double myPow(double x, int n) {
+        if(n == 0) return 1;
+        if(n == 1) return x;
+        if(n == -1) return 1 / x;
+        double half = myPow(x, n / 2);
+        double mod = myPow(x, n % 2);
+        return half * half * mod;
+    }
+}
+
+//
+class Solution {
+    public double myPow(double x, int n) {
+        if(x == 0) return 0;
+        long b = n;
+        double res = 1.0;
+        if(b < 0) {
+            x = 1 / x;
+            b = -b;
+        }
+        while(b > 0) {
+            if((b & 1) == 1) res *= x;
+            x *= x;
+            b >>= 1;
+        }
+        return res;
+    }
+}
+
+```
+
+
+
+#### 剑指Offer 17（打印数组）*
 
 ```java
 // 这个太简单，考虑一下大数问题
@@ -250,7 +487,7 @@ class Solution {
 
 
 
-#### 剑指Offer 18
+#### 剑指Offer 18（在 O(1) 时间内删除链表节点）
 
 ```java
 // 利用了两个指针记录
@@ -275,9 +512,94 @@ class Solution {
 
 
 
+#### 剑指Offer 19（正则表达式匹配）
+
+```java
+
+```
 
 
-#### 剑指Offer 22
+
+#### 剑指Offer 20（表示数值的字符串）
+
+```java
+// CV大法
+class Solution {
+    public boolean isNumber(String s) {
+        if(s == null || s.length() == 0){
+            return false;
+        }
+        //标记是否遇到相应情况
+        boolean numSeen = false;
+        boolean dotSeen = false;
+        boolean eSeen = false;
+        char[] str = s.trim().toCharArray();
+        for(int i = 0;i < str.length; i++){
+            if(str[i] >= '0' && str[i] <= '9'){
+                numSeen = true;
+            }else if(str[i] == '.'){
+                //.之前不能出现.或者e
+                if(dotSeen || eSeen){
+                    return false;
+                }
+                dotSeen = true;
+            }else if(str[i] == 'e' || str[i] == 'E'){
+                //e之前不能出现e，必须出现数
+                if(eSeen || !numSeen){
+                    return false;
+                }
+                eSeen = true;
+                numSeen = false;//重置numSeen，排除123e或者123e+的情况,确保e之后也出现数
+            }else if(str[i] == '-' || str[i] == '+'){
+                //+-出现在0位置或者e/E的后面第一个位置才是合法的
+                if(i != 0 && str[i-1] != 'e' && str[i-1] != 'E'){
+                    return false;
+                }
+            }else{//其他不合法字符
+                return false;
+            }
+        }
+        return numSeen;
+    }
+}
+```
+
+
+
+#### 剑指Offer 21（调整数组顺序使奇数位于偶数前面）
+
+```java
+// 双指针法交换，太慢了
+class Solution {
+    public int[] exchange(int[] nums) {
+        // 双指针法
+        int left = 0, right = nums.length - 1;
+        int temp;
+        while (left < right){
+             if (isOdd(nums[left])) {// 前奇
+                left++;
+            }else if (!isOdd(nums[right])){// 后偶
+                right--;
+            }else {// 前偶后奇
+                temp = nums[left];
+                nums[left] = nums[right];
+                nums[right] = temp;
+                left++;
+                right--;
+            }
+        }
+        return nums;
+    }
+
+    private boolean isOdd(int num){
+        return num % 2 == 1;
+    }
+}
+```
+
+
+
+#### 剑指Offer 22（链表中倒数第 K 个结点）
 
 ```java
 // 典型的双指针问题
@@ -298,9 +620,10 @@ class Solution {
 
 
 
-#### 剑指Offer 24
+#### 剑指Offer 24（反转链表）
 
 ```java
+// 三指针法，需注意指针初始化为null
 class Solution {
     public ListNode reverseList(ListNode head) {
         ListNode pre = null;
@@ -319,7 +642,7 @@ class Solution {
 
 
 
-#### 剑指Offer 25 （合并有序链表）
+#### 剑指Offer 25（合并有序链表）
 
 ```java
 // 链表类问题，设置dummyHead是一个常规操作，主要是为了避免讨论头节点，倒不一定是头节点丢失。
@@ -431,7 +754,7 @@ class Solution {
 
 
 
-#### 剑指Offer 29
+#### 剑指Offer 29（顺时针打印矩阵）
 
 ```java
 class Solution {
@@ -476,7 +799,70 @@ class Solution {
 
 
 
-#### 剑指Offer32-1
+#### 剑指Offer 30（包含 min 函数的栈）
+
+```java
+class MinStack {
+
+    // 数据栈和最小值栈
+    Stack<Integer> dataStack, minStack;
+    public MinStack() {
+        dataStack = new Stack<>();
+        minStack = new Stack<>();
+    }
+
+    public void push(int x) {
+        // 数据栈添加数据
+        dataStack.add(x);
+        // 若最小值栈为空 或者
+        // 加入的值小于等于当前最小值，添加最小值
+        if(minStack.empty() || minStack.peek() >= x)
+            minStack.add(x);
+    }
+
+    public void pop() {
+        // 数据栈pop，若数据栈pop的值是最小值则最小值栈也要pop
+        if(dataStack.pop().equals(minStack.peek()))
+            minStack.pop();
+    }
+
+    public int top() {
+        return dataStack.peek();
+    }
+
+    public int min() {
+        return minStack.peek();
+    }
+}
+```
+
+
+
+#### 剑指Offer 31（栈的压入、弹出序列）
+
+```java
+// 根据两个数组模拟栈的出入
+class Solution {
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+        Stack<Integer> stack = new Stack<>();
+        int i = 0;
+        for(int num : pushed) {
+            stack.push(num); // num 入栈
+          	// 只有当此时栈顶元素等于此时poped[i]，出栈，并且i++
+            while(!stack.isEmpty() && stack.peek() == popped[i]) { // 循环判断与出栈
+                stack.pop();
+                i++;
+            }
+        }
+        // 模拟成功则栈为空
+        return stack.isEmpty();
+    }
+}
+```
+
+
+
+#### 剑指Offer 32-1（从上往下打印二叉树）
 
 ```java
 // 就一个层次遍历，不是很懂为什么是medium
@@ -506,7 +892,7 @@ class Solution {
 
 
 
-#### 剑指Offer32-2
+#### 剑指Offer 32-2（把二叉树打印成多行）
 
 ```java
 // 自己的方法用了两个队列
@@ -539,7 +925,7 @@ class Solution {
 
 
 
-#### 剑指Offer32-3
+#### 剑指Offer 32-3（按之字形顺序打印二叉树）
 
 ```java
 class Solution {
@@ -574,6 +960,12 @@ class Solution {
 ```
 
 
+
+#### 剑指Offer 33（二叉搜索树的后序遍历序列）
+
+```java
+
+```
 
 
 
@@ -618,8 +1010,6 @@ class Solution {
 
 
 
-
-
 #### 剑指Offer 35（链表拷贝）
 
 >太菜了，没明白题意。
@@ -648,6 +1038,14 @@ class Solution {
         return map.get(head);
     }
 }
+```
+
+
+
+#### 剑指Offer 36（二叉搜索树与双向链表）
+
+```java
+
 ```
 
 
@@ -695,7 +1093,107 @@ class Solution {
 
 
 
-#### 剑指Offer 48
+#### 剑指Offer 39（ 数组中出现次数超过一半的数字）
+
+```java
+class Solution {
+    public int majorityElement(int[] nums) {
+        // 需要的数字出现次数多于一半 那么排序后必定在中间
+        Arrays.sort(nums);
+        return nums[nums.length / 2];
+    }
+}
+```
+
+
+
+#### 剑指Offer 40（最小的 K 个数）
+
+```java
+// Arrays.sort()
+class Solution {
+    public int[] getLeastNumbers(int[] arr, int k) {
+        Arrays.sort(arr);
+        int[] ans = new int[k];
+        for (int i = 0; i < k; i++) {
+            ans[i] = arr[i];
+        }
+        return ans;
+    }
+}
+```
+
+
+
+#### 剑指Offer 41（数据流中的中位数）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 42（连续子数组的最大和）
+
+```java
+class Solution {
+    public int maxSubArray(int[] nums) {
+        // 动态规划
+        int[] dp = new int[nums.length];
+        dp[0] = nums[0];
+        int max = dp[0];
+        for(int i = 1; i < nums.length; i++){
+            dp[i] = Math.max(dp[i-1] + nums[i], nums[i]);
+            max = Math.max(max, dp[i]);
+        }
+        return max;
+    }
+}
+```
+
+
+
+#### 剑指Offer 43（1 ～n 整数中 1 出现的次数）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 44（数字序列中的某一位数字）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 45（把数组排成最小的数）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 46（把数字翻译成字符串）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 47（礼物的最大价值）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 48（最长不含重复字符的子字符串）
 
 ```java
 // 哈希表解法，滑动窗口
@@ -721,7 +1219,15 @@ class Solution {
 
 
 
-#### 剑指Offer 50
+#### 剑指Offer 49（丑数）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 50（第一个只出现一次的字符位置）
 
 ```java
 class Solution {
@@ -740,6 +1246,14 @@ class Solution {
         return ' ';
     }
 }
+```
+
+
+
+#### 剑指Offer 51（数组中的逆序对）
+
+```java
+
 ```
 
 
@@ -816,7 +1330,7 @@ class Solution {
 
 
 
-#### 剑指Offer 53 - 2
+#### 剑指Offer 53 - 2（0～n-1中缺失的数字）
 
 ```java
 class Solution {
@@ -1011,7 +1525,7 @@ class Solution {
 
 
 
-#### 剑指Offer57 
+#### 剑指Offer 57-1（和为 S 的两个数字）
 
 ```java
 // 本题是有序的，可优化。可用双指针
@@ -1028,6 +1542,43 @@ class Solution {
             }
         }
         return null;
+    }
+}
+```
+
+
+
+#### 剑指Offer 57-2（和为 S 的连续正数序列）
+
+```java
+class Solution {
+    public int[][] findContinuousSequence(int target) {
+        List<int[]> list = new ArrayList<>();
+
+        // 脑子里要有一个区间的概念，这里的区间是(1, 2, 3, ..., target - 1)
+        // 套滑动窗口模板，l是窗口左边界，r是窗口右边界，窗口中的值一定是连续值。
+        // 当窗口中数字和小于target时，r右移; 大于target时，l右移; 等于target时就获得了一个解
+        for (int l = 1, r = 1, sum = 0; r <= target/2 + 1; r++) {
+            sum += r;
+            // 左指针右移
+            while (sum > target) {
+                sum -= l;
+                l++;
+            }
+            if (sum == target) {
+                int[] temp = new int[r - l + 1];
+                for (int i = 0; i < temp.length; i++) {
+                    temp[i] = l + i;
+                }
+                list.add(temp);
+            }
+        }
+
+        int[][] res = new int[list.size()][];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = list.get(i);
+        }
+        return res;
     }
 }
 ```
@@ -1063,6 +1614,115 @@ class Solution {
         return ans.toString();
     }
 }
+```
+
+
+
+#### 剑指Offer 59-1（滑动窗口的最大值）
+
+```java
+// 自己的太慢了
+class Solution {
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        if(nums == null || nums.length == 0) {
+            return new int[0];
+        }
+        int len = nums.length;
+        int[] ans = new int[len - k + 1];
+        for (int l = 0, r = k - 1; l < len - k + 1 ; l++) {
+            ans[l] = getMax(nums, l, r);
+            r++;
+        }
+        return ans;
+    }
+
+    private int getMax(int[] nums, int l, int r){
+        int max = Integer.MIN_VALUE;
+        for (int i = l; i <= r; i++) {
+            max = Math.max(nums[i], max);
+        }
+        return max;
+    }
+}
+
+// LC上需要在线性时间复杂度内解决此题
+```
+
+
+
+#### 剑指Offer 59-2（队列的最大值）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 60（n 个骰子的点数）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 61（扑克牌顺子）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 62（圆圈中最后剩下的数）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 63（股票的最大利润）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 64（求 1+2+3+...+n）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 65（不用加减乘除做加法）
+
+```java
+// 位运算真不会，得看
+class Solution {
+    public int add(int a, int b) {
+        return b == 0 ? a : add(a ^ b, (a & b) << 1);
+    }
+}
+```
+
+
+
+#### 剑指Offer 66（构建乘积数组）
+
+```java
+
+```
+
+
+
+#### 剑指Offer 67（把字符串转换成整数）
+
+```java
+
 ```
 
 

@@ -24,7 +24,12 @@ public class MainTest {
 
 //        Sword58_1 sword58_1 = new Sword58_1();
 //        sword58_1.reverseWords("     the sky  is    blue    ");
-        Sword58_2 sword58_2 = new Sword58_2();
-        sword58_2.reverseLeftWords("lrloseumgh", 6);
+//        Sword58_2 sword58_2 = new Sword58_2();
+//        sword58_2.reverseLeftWords("lrloseumgh", 6);
+//        Sword14_1 sword14_1 = new Sword14_1();
+//        sword14_1.cuttingRope(10);
+
+        Sword21 sword21 = new Sword21();
+        sword21.exchange(new int[]{2,16,3,5,13,1,16,1,12,18,11,8,11,11,5,1});
     }
 }

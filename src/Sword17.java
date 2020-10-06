@@ -6,6 +6,5 @@ public class Sword17 {
             ans[i] = i + 1;
         }
         return ans;
-
     }
 }
