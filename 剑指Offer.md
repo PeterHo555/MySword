@@ -1045,7 +1045,113 @@ class Solution {
 #### 剑指Offer 36（二叉搜索树与双向链表）
 
 ```java
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node left;
+    public Node right;
 
+    public Node() {}
+
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val,Node _left,Node _right) {
+        val = _val;
+        left = _left;
+        right = _right;
+    }
+};
+*/
+class Solution {
+    // 1. 中序，递归
+    Node pre;
+    Node head;
+    public Node treeToDoublyList(Node root) {
+        // 边界值
+        if(root == null) return null;
+        inOrder(root);
+
+        // 题目要求头尾连接
+        head.left = pre;
+        pre.right = head;
+        // 返回头节点
+        return head;
+    }
+    void inOrder(Node cur) {
+        // 递归结束条件
+        if(cur == null)
+            return;
+        inOrder(cur.left);
+        // 如果pre为空，就说明是第一个节点，头结点，然后用head保存头结点，用于之后的返回
+        if (pre == null)
+            head = cur;
+        // 如果不为空，那就说明是中间的节点。并且pre保存的是上一个节点，
+        // 让上一个节点的右指针指向当前节点
+        else if (pre != null)
+            pre.right = cur;
+        // 再让当前节点的左指针指向父节点，也就连成了双向链表
+        cur.left = pre;
+        // 保存当前节点，用于下层递归创建
+        pre = cur;
+        inOrder(cur.right);
+    }
+}/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node left;
+    public Node right;
+
+    public Node() {}
+
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val,Node _left,Node _right) {
+        val = _val;
+        left = _left;
+        right = _right;
+    }
+};
+*/
+class Solution {
+    // 1. 中序，递归
+    Node pre;
+    Node head;
+    public Node treeToDoublyList(Node root) {
+        // 边界值
+        if(root == null) return null;
+        inOrder(root);
+
+        // 题目要求头尾连接
+        head.left = pre;
+        pre.right = head;
+        // 返回头节点
+        return head;
+    }
+    void inOrder(Node cur) {
+        // 递归结束条件
+        if(cur == null)
+            return;
+        inOrder(cur.left);
+        // 如果pre为空，就说明是第一个节点，头结点，然后用head保存头结点，用于之后的返回
+        if (pre == null)
+            head = cur;
+        // 如果不为空，那就说明是中间的节点。并且pre保存的是上一个节点，
+        // 让上一个节点的右指针指向当前节点
+        else if (pre != null)
+            pre.right = cur;
+        // 再让当前节点的左指针指向父节点，也就连成了双向链表
+        cur.left = pre;
+        // 保存当前节点，用于下层递归创建
+        pre = cur;
+        inOrder(cur.right);
+    }
+}
 ```
 
 
@@ -1172,7 +1278,21 @@ class Solution {
 #### 剑指Offer 45（把数组排成最小的数）
 
 ```java
-
+class Solution {
+    public String minNumber(int[] nums) {
+        String[] strs = new String[nums.length];
+        // 整型数组 -> 字符串数组
+        for(int i = 0; i < nums.length; i++)
+            strs[i] = String.valueOf(nums[i]);
+        // 将lambda表达式定义的比较器传入 Array.sort() 方法
+        Arrays.sort(strs, (x, y) -> (x + y).compareTo(y + x));
+        // 将字符串数组连接为数组，速度快于 String.join("",strs);
+        StringBuilder res = new StringBuilder();
+        for(String s : strs)
+            res.append(s);
+        return res.toString();
+    }
+}
 ```
 
 
@@ -1188,7 +1308,83 @@ class Solution {
 #### 剑指Offer 47（礼物的最大价值）
 
 ```java
+// 没用滚动数组
+class Solution {
+    public int maxValue(int[][] grid) {
+        if (grid == null || grid.length == 0)
+            return 0;
+        int m = grid.length, n = grid[0].length;
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                dp[i][j] = Math.max(grid[i - 1][j - 1] + dp[i - 1][j], grid[i - 1][j - 1] + dp[i][j - 1]);
+            }
+        }
+        return dp[m][n];
+    }
+}
 
+// 用了滚动数组优化空间复杂度
+class Solution {
+    public int maxValue(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        int[] dp = new int[n + 1];
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                dp[j] = Math.max(dp[j], dp[j - 1]) + grid[i - 1][j - 1];
+            } 
+        }
+        return dp[n];
+    }
+}
+
+// DFS超时
+class Solution {
+    int m = 0;  // 行数
+    int n = 0;  // 列数
+    public int maxValue(int[][] grid) {
+        m = grid.length;
+        if (m == 0) {   // 空的grid
+            return 0;
+        }
+        n = grid[0].length;
+        return DFS(grid, 0, 0);
+    }
+
+    public int DFS(int[][] grid, int row, int column) {
+        int goRight = grid[row][column];
+        int goDown = grid[row][column];
+        if (row + 1 < m && column + 1 < n) {            // 右和下都可以走
+            goRight += DFS(grid, row, column + 1);
+            goDown += DFS(grid, row + 1, column);
+        } else if (row + 1 < m && column + 1 >= n) {    // 只能走右
+            goRight += DFS(grid, row + 1, column);
+        } else if (row + 1 >= m && column + 1 < n) {    // 只能走下
+            goDown += DFS(grid, row, column + 1);
+        }
+        return Math.max(goRight, goDown);
+    }
+}
+
+// 暴力递归超时
+class Solution {
+    public int maxValue(int[][] grid) {
+        if (grid == null || grid.length == 0)
+            return 0;
+        int m = grid.length, n = grid[0].length;
+        return helper(grid, m - 1, n - 1);
+    }
+
+    private int helper(int[][] grid, int m, int n){
+        if (m == 0 && n == 0)
+            return grid[m][n];
+        if (n == 0)
+            return grid[m][n] + helper(grid, m - 1, 0);
+        if (m == 0)
+            return grid[m][n] + helper(grid, 0, n - 1);
+        return grid[m][n] + Math.max(helper(grid, m - 1, n), helper(grid, m, n - 1));
+    }
+}
 ```
 
 
@@ -1222,7 +1418,29 @@ class Solution {
 #### 剑指Offer 49（丑数）
 
 ```java
-
+class Solution {
+    public int nthUglyNumber(int n) {
+        int p2 = 0,p3 = 0,p5 = 0;
+        int[] dp = new int[n];
+        dp[0] = 1;
+        for (int i = 1; i < n; i++) {
+            dp[i] = Math.min(dp[p2] * 2, Math.min(dp[p3] * 3, dp[p5] * 5));
+            if(dp[i] == dp[p2] * 2) p2++;
+            if(dp[i] == dp[p3] * 3) p3++;
+            if(dp[i] == dp[p5] * 5) p5++;
+        }
+        return dp[n - 1];
+    }
+    // 一个十分巧妙的动态规划问题
+    // 1.我们将前面求得的丑数记录下来，后面的丑数就是前面的丑数*2，*3，*5
+    // 2.但是问题来了，我怎么确定已知前面k-1个丑数，我怎么确定第k个丑数呢
+    // 3.采取用三个指针的方法，p2,p3,p5
+    // 4.index2指向的数字下一次永远*2，p3指向的数字下一次永远*3，p5指向的数字永远*5
+    // 5.我们从2*p2 3*p3 5*p5选取最小的一个数字，作为第k个丑数
+    // 6.如果第K个丑数==2*p2，也就是说前面0-p2个丑数*2不可能产生比第K个丑数更大的丑数了，所以p2++
+    // 7.p3,p5同理
+    // 8.返回第n个丑数
+}
 ```
 
 
@@ -1669,7 +1887,17 @@ class Solution {
 #### 剑指Offer 61（扑克牌顺子）
 
 ```java
-
+class Solution {
+    public boolean isStraight(int[] nums) {
+        int joker = 0;
+        Arrays.sort(nums); // 数组排序
+        for(int i = 0; i < 4; i++) {
+            if(nums[i] == 0) joker++; // 统计大小王数量
+            else if(nums[i] == nums[i + 1]) return false; // 若有重复，提前返回 false
+        }
+        return nums[4] - nums[joker] < 5; // 最大牌 - 最小牌 < 5 则可构成顺子
+    }
+}
 ```
 
 
@@ -1677,7 +1905,34 @@ class Solution {
 #### 剑指Offer 62（圆圈中最后剩下的数）
 
 ```java
-
+// 模拟做法，但是很慢
+class Solution {
+    public int lastRemaining(int n, int m) {
+        ArrayList<Integer> list = new ArrayList<>(n);
+        for (int i = 0; i < n; i++) {
+            list.add(i);
+        }
+        int idx = 0;
+        while (n > 1) {
+            idx = (idx + m - 1) % n;
+            list.remove(idx);
+            // 每取一个数字，剩余的数都会减一，需要的模也减一
+            n--;
+        }
+        return list.get(0);
+    }
+}
+// 数学方法
+class Solution {
+    public int lastRemaining(int n, int m) {
+        int ans = 0;
+        // 最后一轮剩下2个人，所以从2开始反推
+        for (int i = 2; i <= n; i++) {
+            ans = (ans + m) % i;
+        }
+        return ans;
+    }
+}
 ```
 
 
@@ -1685,7 +1940,20 @@ class Solution {
 #### 剑指Offer 63（股票的最大利润）
 
 ```java
-
+class Solution {
+    public int maxProfit(int[] prices) {
+        int ans = 0;
+        //寻找最小的值，并在它之后找一个最大的值，取差值即为答案
+        int minPrice = Integer.MAX_VALUE;
+        for (int i = 0; i < prices.length; i++) {
+            if (prices[i] < minPrice)
+                minPrice = prices[i];
+            else
+                ans = Math.max(ans, prices[i] - minPrice);
+        }
+        return ans;
+    }
+}
 ```
 
 
@@ -1693,7 +1961,16 @@ class Solution {
 #### 剑指Offer 64（求 1+2+3+...+n）
 
 ```java
-
+class Solution {
+    //Java 中，为构成语句，需加一个辅助布尔量 xx ，否则会报错；
+    //Java 中，开启递归函数需改写为 sumNums(n - 1) > 0 ，此整体作为一个布尔量输出，否则会报错；
+    //初始化变量 resres 记录结果。（ Java 可使用第二栏的简洁写法，不用借助变量 resres ）。
+    public int sumNums(int n) {
+        // 当 n = 1 时 n > 1 不成立 ，此时 “短路” ，终止后续递归
+        boolean x = n > 1 && (n += sumNums(n - 1)) > 0;
+        return n;
+    }
+}
 ```
 
 
@@ -1714,7 +1991,35 @@ class Solution {
 #### 剑指Offer 66（构建乘积数组）
 
 ```java
-
+// 双指针累乘
+class Solution {
+    public int[] constructArr(int[] a) {
+        int n = a.length;
+        int left = 1, right = 1;     //left：从左边累乘，right：从右边累乘
+        int[] ans = new int[n];
+        Arrays.fill(ans, 1);
+        for(int i = 0; i < n; ++i){
+            //最终每个元素其左右乘积进行相乘得出结果
+            ans[i] *= left;       //乘以其左边的乘积
+            left *= a[i];
+            ans[n - 1 - i] *= right;  //乘以其右边的乘积
+            right *= a[n - 1 - i];
+        }
+        return ans;
+    }
+}
+// 本质上是动态规划
+class Solution {
+    public int[] constructArr(int[] a) {
+        int n = a.length;
+        int[] B = new int[n];
+        for (int i = 0, product = 1; i < n; product *= a[i], i++)       /* 从左往右累乘 */
+            B[i] = product;
+        for (int i = n - 1, product = 1; i >= 0; product *= a[i], i--)  /* 从右往左累乘 */
+            B[i] *= product;
+        return B;
+    }
+}
 ```
 
 
@@ -1722,7 +2027,33 @@ class Solution {
 #### 剑指Offer 67（把字符串转换成整数）
 
 ```java
-
+class Solution {
+    public int strToInt(String str) {
+        char[] c = str.trim().toCharArray();
+        if(c.length == 0)
+            return 0;
+        // limit = 214748364
+        int res = 0, limit = Integer.MAX_VALUE / 10;
+        int i = 1, sign = 1;
+        // 若首字符为'-'，标记符号位为-1
+        if(c[0] == '-')
+            sign = -1;
+        // 其余情况下，只要不是'+'，就都是非法，标记为0
+        else if(c[0] != '+')
+            i = 0;
+        // 遍历剩余字符数组的每一位。
+        for(int j = i; j < c.length; j++) {
+            // 若char数组中含有非法字符，break
+            if(c[j] < '0' || c[j] > '9')
+                break;
+            // 结果需要小于2147483647，退一位计算比较方便
+            if(res > limit || res == limit && c[j] > '7')
+                return sign == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+            res = res * 10 + (c[j] - '0');
+        }
+        return sign * res;
+    }
+}
 ```
 
 
@@ -1778,7 +2109,7 @@ class Solution {
     }
 }
 
-// 别人的代码注解
+// 大佬题解
 class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         if(root == null) return null; // 如果树为空，直接返回null

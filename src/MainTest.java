@@ -28,8 +28,12 @@ public class MainTest {
 //        sword58_2.reverseLeftWords("lrloseumgh", 6);
 //        Sword14_1 sword14_1 = new Sword14_1();
 //        sword14_1.cuttingRope(10);
-
-        Sword21 sword21 = new Sword21();
-        sword21.exchange(new int[]{2,16,3,5,13,1,16,1,12,18,11,8,11,11,5,1});
+//
+//        Sword21 sword21 = new Sword21();
+//        sword21.exchange(new int[]{2,16,3,5,13,1,16,1,12,18,11,8,11,11,5,1});
+//        Sword67 sword67 = new Sword67();
+//        sword67.strToInt("-47");
+        Sword66 sword66 = new Sword66();
+        sword66.constructArr(new int[]{1,2,3,4,5});
     }
 }
