@@ -381,7 +381,7 @@ class Solution {
 
 
 
-#### 剑指Offer 14-2（剪绳子2）*
+#### 剑指Offer 14-2（剪绳子2）
 
 ```java
 // 再看看吧
@@ -469,7 +469,7 @@ class Solution {
 
 
 
-#### 剑指Offer 17（打印数组）*
+#### 剑指Offer 17（打印数组）
 
 ```java
 // 这个太简单，考虑一下大数问题
@@ -515,7 +515,41 @@ class Solution {
 #### 剑指Offer 19（正则表达式匹配）
 
 ```java
+// 直接放弃
+class Solution {
+    public boolean isMatch(String s, String p) {
+        int n = s.length();
+        int m = p.length();
+        boolean[][] f = new boolean[n + 1][m + 1];
 
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= m; j++) {
+                //分成空正则和非空正则两种
+                if (j == 0) {
+                    f[i][j] = i == 0;
+                } else {
+                    //非空正则分为两种情况 * 和 非*
+                    if (p.charAt(j - 1) != '*') {
+                        if (i > 0 && (s.charAt(i - 1) == p.charAt(j - 1) || p.charAt(j - 1) == '.')) {
+                            f[i][j] = f[i - 1][j - 1];
+                        }
+                    } else {
+                        //碰到 * 了，分为看和不看两种情况
+                        //不看
+                        if (j >= 2) {
+                            f[i][j] |= f[i][j - 2];
+                        }
+                        //看
+                        if (i >= 1 && j >= 2 && (s.charAt(i - 1) == p.charAt(j - 2) || p.charAt(j - 2) == '.')) {
+                            f[i][j] |= f[i - 1][j];
+                        }
+                    }
+                }
+            }
+        }
+        return f[n][m];
+    }
+}
 ```
 
 
@@ -964,7 +998,43 @@ class Solution {
 #### 剑指Offer 33（二叉搜索树的后序遍历序列）
 
 ```java
-
+// 单调栈
+class Solution {
+    public boolean verifyPostorder(int[] postorder) {
+        // 单调栈使用，单调递增的单调栈
+        Deque<Integer> stack = new LinkedList<>();
+        int pervElem = Integer.MAX_VALUE;
+        // 逆向遍历，就是翻转的先序遍历
+        for (int i = postorder.length - 1;i>=0;i--){
+            // 左子树元素必须要小于递增栈被peek访问的元素，否则就不是二叉搜索树
+            if (postorder[i] > pervElem){
+                return false;
+            }
+            while (!stack.isEmpty() && postorder[i] < stack.peek()){
+                // 数组元素小于单调栈的元素了，表示往左子树走了，记录下上个根节点
+                // 找到这个左子树对应的根节点，之前右子树全部弹出，不再记录，因为不可能在往根节点的右子树走了
+                pervElem = stack.pop();
+            }
+            // 这个新元素入栈
+            stack.push(postorder[i]);
+        }
+        return true;
+    }
+}
+// 递归
+class Solution {
+    public boolean verifyPostorder(int[] postorder) {
+        return recur(postorder, 0, postorder.length - 1);
+    }
+    boolean recur(int[] postorder, int i, int j) {
+        if(i >= j) return true;
+        int p = i;
+        while(postorder[p] < postorder[j]) p++;
+        int m = p;
+        while(postorder[p] > postorder[j]) p++;
+        return p == j && recur(postorder, i, m - 1) && recur(postorder, m, j - 1);
+    }
+}
 ```
 
 
@@ -1159,7 +1229,48 @@ class Solution {
 #### 剑指Offer 37（序列化二叉树）
 
 ```java
-// 不会
+// 暂时放弃，但感觉可以写
+public class Codec {
+    public String serialize(TreeNode root) {
+        if(root == null) return "[]";
+        StringBuilder res = new StringBuilder("[");
+        Queue<TreeNode> queue = new LinkedList<TreeNode>() {{ add(root); }};
+        while(!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            if(node != null) {
+                res.append(node.val + ",");
+                queue.add(node.left);
+                queue.add(node.right);
+            }
+            else res.append("null,");
+        }
+        res.deleteCharAt(res.length() - 1);
+        res.append("]");
+        return res.toString();
+    }
+
+    public TreeNode deserialize(String data) {
+        if(data.equals("[]")) return null;
+        String[] vals = data.substring(1, data.length() - 1).split(",");
+        TreeNode root = new TreeNode(Integer.parseInt(vals[0]));
+        Queue<TreeNode> queue = new LinkedList<TreeNode>() {{ add(root); }};
+        int i = 1;
+        while(!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            if(!vals[i].equals("null")) {
+                node.left = new TreeNode(Integer.parseInt(vals[i]));
+                queue.add(node.left);
+            }
+            i++;
+            if(!vals[i].equals("null")) {
+                node.right = new TreeNode(Integer.parseInt(vals[i]));
+                queue.add(node.right);
+            }
+            i++;
+        }
+        return root;
+    }
+}
 ```
 
 
@@ -1234,7 +1345,25 @@ class Solution {
 #### 剑指Offer 41（数据流中的中位数）
 
 ```java
-
+class MedianFinder {
+    Queue<Integer> A, B;
+    public MedianFinder() {
+        A = new PriorityQueue<>(); // 小顶堆，保存较大的一半
+        B = new PriorityQueue<>((x, y) -> (y - x)); // 大顶堆，保存较小的一半
+    }
+    public void addNum(int num) {
+        if(A.size() != B.size()) {
+            A.add(num);
+            B.add(A.poll());
+        } else {
+            B.add(num);
+            A.add(B.poll());
+        }
+    }
+    public double findMedian() {
+        return A.size() != B.size() ? A.peek() : (A.peek() + B.peek()) / 2.0;
+    }
+}
 ```
 
 
@@ -1262,7 +1391,26 @@ class Solution {
 #### 剑指Offer 43（1 ～n 整数中 1 出现的次数）
 
 ```java
-
+// 数学方法
+class Solution {
+    public int countDigitOne(int n) {
+        int num = n;
+        long i = 1;
+        int s = 0;
+        while(num > 0) {
+            if(num % 10 == 0) // 不包含1 -9
+                s += (num / 10) * i; // 修正值是 0
+            if(num % 10 == 1) // 包含 1 - 9的一部分
+                s += (num / 10) * i + (n % i) + 1; // 修正值是(n % i) + 1
+            if(num % 10 > 1) // 包含1 - 9
+                s += (num / 10) * i + i; // i
+            num = num / 10; // 比如109/10 = 10， 可以按10位的处理，因为i增量了10倍
+            i = i * 10; // 每次1的个数是增加10倍
+        }
+        return s;
+    }
+}
+// 或者用数位DP，得去了解
 ```
 
 
@@ -1270,7 +1418,22 @@ class Solution {
 #### 剑指Offer 44（数字序列中的某一位数字）
 
 ```java
-
+// 找规律
+class Solution {
+    public int findNthDigit(int n) {
+        int digit = 1;
+        long start = 1;
+        long count = 9;
+        while (n > count) { // 1.
+            n -= count;
+            digit += 1;
+            start *= 10;
+            count = digit * start * 9;
+        }
+        long num = start + (n - 1) / digit; // 2.
+        return Long.toString(num).charAt((n - 1) % digit) - '0'; // 3.
+    }
+}
 ```
 
 
@@ -1300,7 +1463,20 @@ class Solution {
 #### 剑指Offer 46（把数字翻译成字符串）
 
 ```java
-
+// 熟记compareTo函数的使用
+class Solution {
+    public int translateNum(int num) {
+        String s = String.valueOf(num);
+        int a = 1, b = 1;
+        for(int i = s.length() - 2; i > -1; i--) {
+            String tmp = s.substring(i, i + 2);
+            int c = tmp.compareTo("10") >= 0 && tmp.compareTo("25") <= 0 ? a + b : a;
+            b = a;
+            a = c;
+        }
+        return a;
+    }
+}
 ```
 
 
@@ -1471,7 +1647,110 @@ class Solution {
 #### 剑指Offer 51（数组中的逆序对）
 
 ```java
+// 暴力超时
+class Solution {
+    public int reversePairs(int[] nums) {
+        int cnt = 0;
+        int len = nums.length;
+        for (int i = 0; i < len - 1; i++) {
+            for (int j = i + 1; j < len; j++) {
+                if (nums[i] > nums[j]) {
+                    cnt++;
+                }
+            }
+        }
+        return cnt;
+    }
+}
 
+// 归并排序
+class Solution {
+
+    public int reversePairs(int[] nums) {
+        int len = nums.length;
+
+        if (len < 2) {
+            return 0;
+        }
+
+        int[] copy = new int[len];
+        for (int i = 0; i < len; i++) {
+            copy[i] = nums[i];
+        }
+
+        int[] temp = new int[len];
+        return reversePairs(copy, 0, len - 1, temp);
+    }
+
+    /**
+     * nums[left..right] 计算逆序对个数并且排序
+     *
+     * @param nums
+     * @param left
+     * @param right
+     * @param temp
+     * @return
+     */
+    private int reversePairs(int[] nums, int left, int right, int[] temp) {
+        if (left == right) {
+            return 0;
+        }
+
+        int mid = left + (right - left) / 2;
+        int leftPairs = reversePairs(nums, left, mid, temp);
+        int rightPairs = reversePairs(nums, mid + 1, right, temp);
+
+        // 如果整个数组已经有序，则无需合并，注意这里使用小于等于
+        if (nums[mid] <= nums[mid + 1]) {
+            return leftPairs + rightPairs;
+        }
+
+        int crossPairs = mergeAndCount(nums, left, mid, right, temp);
+        return leftPairs + rightPairs + crossPairs;
+    }
+
+    /**
+     * nums[left..mid] 有序，nums[mid + 1..right] 有序
+     *
+     * @param nums
+     * @param left
+     * @param mid
+     * @param right
+     * @param temp
+     * @return
+     */
+    private int mergeAndCount(int[] nums, int left, int mid, int right, int[] temp) {
+        for (int i = left; i <= right; i++) {
+            temp[i] = nums[i];
+        }
+
+        int i = left;
+        int j = mid + 1;
+
+        int count = 0;
+        for (int k = left; k <= right; k++) {
+            // 有下标访问，得先判断是否越界
+            if (i == mid + 1) {
+                nums[k] = temp[j];
+                j++;
+            } else if (j == right + 1) {
+                nums[k] = temp[i];
+                i++;
+            } else if (temp[i] <= temp[j]) {
+                // 注意：这里是 <= ，写成 < 就不对，请思考原因
+                nums[k] = temp[i];
+                i++;
+            } else {
+                nums[k] = temp[j];
+                j++;
+                
+                // 在 j 指向的元素归并回去的时候，计算逆序对的个数，只多了这一行代码
+                count += (mid - i + 1);
+            }
+        }
+        return count;
+    }
+}
 ```
 
 
@@ -1871,7 +2150,37 @@ class Solution {
 #### 剑指Offer 59-2（队列的最大值）
 
 ```java
+// 定义数组解决
+// 定义开始和末尾的指针
+// max_value无法做到O(1)
+class MaxQueue {
+    
+    int[] q = new int[20000];
+    int begin = 0, end = 0;
+    
+    public MaxQueue() {
 
+    }
+
+    public int max_value() {
+        int ans = -1;
+        for (int i = begin; i != end; ++i) {
+            ans = Math.max(ans, q[i]);
+        }
+        return ans;
+    }
+
+    public void push_back(int value) {
+        q[end++] = value;
+    }
+
+    public int pop_front() {
+        if (begin == end) {
+            return -1;
+        }
+        return q[begin++];
+    }
+}
 ```
 
 
@@ -1879,7 +2188,31 @@ class Solution {
 #### 剑指Offer 60（n 个骰子的点数）
 
 ```java
-
+// 搞不懂
+class Solution {
+    public double[] twoSum(int n) {
+        int[][] dp = new int[n + 1][6 * n + 1];
+        //边界条件
+        for (int s = 1; s <= 6; s++)
+            dp[1][s] = 1;
+        for (int i = 2; i <= n; i++) {
+            for (int s = i;s <= 6*i;s++) {
+                //求dp[i][s]
+                for (int d=1; d <= 6; d++) {
+                    if(s - d < i - 1)
+                      break;//为0了
+                    dp[i][s] += dp[i - 1][s - d];
+                }
+            }
+        }
+        double total = Math.pow((double)6, (double)n);
+        double[] ans = new double[5 * n + 1];
+        for (int i = n; i <= 6 * n; i++) {
+            ans[i - n] = ((double)dp[n][i]) / total;
+        }
+        return ans;
+    }
+}
 ```
 
 

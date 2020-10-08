@@ -33,7 +33,11 @@ public class MainTest {
 //        sword21.exchange(new int[]{2,16,3,5,13,1,16,1,12,18,11,8,11,11,5,1});
 //        Sword67 sword67 = new Sword67();
 //        sword67.strToInt("-47");
-        Sword66 sword66 = new Sword66();
-        sword66.constructArr(new int[]{1,2,3,4,5});
+//        Sword66 sword66 = new Sword66();
+//        sword66.constructArr(new int[]{1,2,3,4,5});
+//        Sword43 sword43 = new Sword43();
+//        sword43.countDigitOne(25);
+        Sword60 sword60 = new Sword60();
+        sword60.twoSum(1);
     }
 }
