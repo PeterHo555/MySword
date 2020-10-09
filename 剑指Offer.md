@@ -2,11 +2,13 @@
 
 ----
 
->作者：**Peter Ho**
+>笔者：**Peter Ho**
 >
->完结日期：**2020年10月6日**
+>版本：**Version 1.0**
 >
->说明：**本笔记记录了作者在刷《剑指Offer》题目过程中的心得体会以及代码注释的整理，便于后续复习，需结合Leetcode的剑指Offer题目使用。**
+>完结日期：**2020年10月8日**
+>
+>说明：**本笔记记录了笔者在刷《剑指Offer》题目过程中的心得体会以及代码注释的整理，便于后续复习，需结合Leetcode的剑指Offer题目使用。**
 >
 >相关链接：**[LeetCode](https://leetcode-cn.com/problemset/lcof/)**  、  **[牛客网](https://www.nowcoder.com/ta/coding-interviews)**
 
@@ -709,7 +711,7 @@ class Solution {
 
 
 
-#### 剑指Offer 26（树的子结构）*
+#### 剑指Offer 26（树的子结构）
 
 ```java
 // 自己写不出啊
@@ -1708,7 +1710,6 @@ class Solution {
         int crossPairs = mergeAndCount(nums, left, mid, right, temp);
         return leftPairs + rightPairs + crossPairs;
     }
-
     /**
      * nums[left..mid] 有序，nums[mid + 1..right] 有序
      *
@@ -1924,7 +1925,6 @@ class Solution {
         return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
     }
 }
-
 //层次遍历，AC速度还不如递归。但是面试可能考
 class Solution {
     public int maxDepth(TreeNode root) {
@@ -1993,7 +1993,6 @@ class Solution {
         return ans;
     }
 }
-
 ```
 
 
@@ -2417,10 +2416,9 @@ class Solution {
 #### 剑指Offer 68-2（二叉树最近公共父节点）
 
 ```java
-// 递归解法
 class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-        /**
+        /** 经典递归
          注意p,q必然存在树内, 且所有节点的值唯一!!!
          递归思想, 对以root为根的(子)树进行查找p和q, 如果root == null || p || q 直接返回root
          表示对于当前树的查找已经完毕, 否则对左右子树进行查找, 根据左右子树的返回值判断:
@@ -2441,7 +2439,6 @@ class Solution {
         return null;
     }
 }
-
 // 大佬题解
 class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
