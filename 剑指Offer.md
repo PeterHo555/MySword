@@ -4,9 +4,9 @@
 
 >笔者：**Peter Ho**
 >
->版本：**Version 1.0**
+>版本：**Version 2.0**
 >
->完结日期：**2020年10月8日**
+>完结日期：**2020年10月14日**
 >
 >说明：**本笔记记录了笔者在刷《剑指Offer》题目过程中的心得体会以及代码注释的整理，便于后续复习，需结合Leetcode的剑指Offer题目使用。**
 >
@@ -18,7 +18,9 @@
 
 ---
 
-#### 剑指Offer 03（数组中的重复数字）
+#### 剑指Offer 03（数组中的重复数字）*
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164052322.png" alt="image-20201014164052322" style="zoom:200%;" />
 
 ```java
 // 只用了访问标记数组，思路简单
@@ -36,11 +38,95 @@ class Solution {
         return 0;
     }
 }
+
+// 评论区整理
+class Solution {
+    // 方法1：排序，时间O(nlogn)，空间O(logn)，修改了原数据
+     public int findRepeatNumber(int[] nums) {
+         Arrays.sort(nums);
+         for(int i = 0 ; i < nums.length-1 ;i++){
+             if(nums[i]==nums[i+1]) return nums[i];
+         }
+         return -1;
+     }
+
+    // 方法2：hash表，时间O(n)，空间O(n)，不修改原数据
+     public int findRepeatNumber(int[] nums) {
+         HashSet<Integer> set = new HashSet<>();
+         for(int num:nums){
+             if(set.contains(num)) return num;
+             set.add(num);
+         }
+         return -1;
+     }
+
+     // 方法3：利用辅助数组，与方法2类似，时间O(n)，空间O(n)，不修改原数据
+     public int findRepeatNumber(int[] nums) {
+         boolean[] isExist = new boolean[nums.length];
+         for(int num : nums){
+             if(isExist[num]) return num;
+             isExist[num] = true;
+         }
+         return -1;
+     }
+
+    // 方法4：利用索引与数字的关系，时间O(n)，空间O(1)，修改了原数据
+    public int findRepeatNumber(int[] nums) {
+        if(nums==null || nums.length==0) return -1;
+        for(int i = 0 ; i < nums.length;i++){
+            //如果该数字没有不和他的索引相等
+            while(nums[i]!=i){
+                //重复返回
+                if(nums[i]==nums[nums[i]]){
+                    return nums[i];
+                }
+                //不重复交换
+                int temp = nums[nums[i]];
+                nums[nums[i]] = nums[i];
+                nums[i] = temp;
+            }
+        }
+        return -1;
+    }
+
+    // 方法5：对0到n-1进行二分查找，时间O(nlogn)，空间O(1)，不修改原数据，用时间换空间
+    // 该方法需要数字一定有重复的才行，因此如果题目修改在长度为n，数字在1到n-1的情况下，此时数组中至少有一个数字是重复的，该方法可以通过。
+     public int findRepeatNumber(int[] nums) {
+         //统计nums中元素位于0到m的数量，如果数量大于这个值，那么重复的元素肯定是位于0到m的
+         int min = 0 ;
+         int max = nums.length-1;
+         while(min<max){
+             int mid = (max+min)>>1;
+             int count = countRange(nums,min,mid);
+             if(count > mid-min+1) {
+                 max = mid;
+             }else{
+                 min = mid+1;
+             }
+         }
+         //最后min=max
+         return min;
+     }
+
+     //统计范围内元素数量,时间O(n)
+     private int countRange(int[] nums,int min,int max){
+         int count = 0 ;
+         for(int num:nums){
+             if(num>=min && num<=max){
+                 count++;
+             }
+         }
+         return count;
+     }
+}
+
 ```
 
 
 
-#### 剑指Offer 04（二维数组的查找）
+#### 剑指Offer 04（二维数组的查找）*
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164220457.png" alt="image-20201014164220457" style="zoom:200%;" />
 
 ```java
 // 站在右上角看。这个矩阵其实就像是一个Binary Search Tree。然后，聪明的大家应该知道怎么做了。
@@ -67,7 +153,9 @@ class Solution {
 
 
 
-#### 剑指Offer 05（替换空格）
+#### 剑指Offer 05（替换空格）*
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164323994.png" alt="image-20201014164323994" style="zoom:200%;" />
 
 ```java
 // 写得有点简单了
@@ -87,7 +175,9 @@ class Solution {
 
 
 
-#### 剑指Offer 06（从头到尾打印链表）
+#### 剑指Offer 06（从头到尾打印链表）*
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164402814.png" alt="image-20201014164402814" style="zoom:200%;" />
 
 ```java
 // 注意边界值就好
@@ -112,6 +202,8 @@ class Solution {
 
 
 #### 剑指Offer 07（重构二叉树）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164527892.png" alt="image-20201014164527892" style="zoom:200%;" />
 
 ```java
 // 不会，没理解
@@ -160,7 +252,9 @@ class Solution {
 
 
 
-#### 剑指Offer 09（用两个栈实现队列）
+#### 剑指Offer 09（用两个栈实现队列）*
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164600887.png" alt="image-20201014164600887" style="zoom:200%;" />
 
 ```Java
 // 很简单的思路，但只击败10%
@@ -193,7 +287,9 @@ class CQueue {
 
 
 
-#### 剑指Offer 10-1（斐波那契数列）
+#### 剑指Offer 10-1（斐波那契数列）*
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164652384.png" alt="image-20201014164652384" style="zoom:200%;" />
 
 ```java
 // 别读错题，要模的
@@ -213,7 +309,9 @@ class Solution {
 
 
 
-#### 剑指Offer 10-2（青蛙跳台阶）
+#### 剑指Offer 10-2（青蛙跳台阶）*
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164716175.png" alt="image-20201014164716175" style="zoom:200%;" />
 
 ```java
 // 斐波那契小改
@@ -233,7 +331,9 @@ class Solution {
 
 
 
-#### 剑指Offer 11（旋转数组中的最小数字）
+#### 剑指Offer 11（旋转数组中的最小数字）*
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164809379.png" alt="image-20201014164809379" style="zoom:200%;" />
 
 ```java
 // 无语
@@ -264,7 +364,9 @@ class Solution {
 
 
 
-#### 剑指Offer 12（矩阵单词查找）
+#### 剑指Offer 12（矩阵单词查找）*
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164858924.png" alt="image-20201014164858924" style="zoom:200%;" />
 
 ```java
 class Solution {
@@ -316,6 +418,8 @@ class Solution {
 
 #### 剑指Offer 13（机器人的运动范围）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164942265.png" alt="image-20201014164942265" style="zoom:200%;" />
+
 ```java
 class Solution {
     boolean[][] visit;
@@ -356,6 +460,8 @@ class Solution {
 
 #### 剑指Offer 14-1（剪绳子1）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014165023256.png" alt="image-20201014165023256" style="zoom:200%;" />
+
 ```java
 // 动态规划
 class Solution {
@@ -385,6 +491,8 @@ class Solution {
 
 #### 剑指Offer 14-2（剪绳子2）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014165054798.png" alt="image-20201014165054798" style="zoom:200%;" />
+
 ```java
 // 再看看吧
 class Solution {
@@ -406,6 +514,8 @@ class Solution {
 
 
 #### 剑指Offer 15（二进制中 1 的个数）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014165429892.png" alt="image-20201014165429892" style="zoom:200%;" />
 
 ```java
 // 位运算
@@ -433,6 +543,8 @@ class Solution {
 
 
 #### 剑指Offer 16（数值的整数次方）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014165509516.png" alt="image-20201014165509516" style="zoom:200%;" />
 
 ```java
 // CV大法
@@ -473,6 +585,8 @@ class Solution {
 
 #### 剑指Offer 17（打印数组）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014165600290.png" alt="image-20201014165600290" style="zoom:200%;" />
+
 ```java
 // 这个太简单，考虑一下大数问题
 class Solution {
@@ -490,6 +604,8 @@ class Solution {
 
 
 #### 剑指Offer 18（在 O(1) 时间内删除链表节点）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014165756220.png" alt="image-20201014165756220" style="zoom:200%;" />
 
 ```java
 // 利用了两个指针记录
@@ -515,6 +631,8 @@ class Solution {
 
 
 #### 剑指Offer 19（正则表达式匹配）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014165938531.png" alt="image-20201014165938531" style="zoom:200%;" />
 
 ```java
 // 直接放弃
@@ -557,6 +675,8 @@ class Solution {
 
 
 #### 剑指Offer 20（表示数值的字符串）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170106281.png" alt="image-20201014170106281" style="zoom:200%;" />
 
 ```java
 // CV大法
@@ -604,6 +724,8 @@ class Solution {
 
 #### 剑指Offer 21（调整数组顺序使奇数位于偶数前面）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170328402.png" alt="image-20201014170328402" style="zoom:200%;" />
+
 ```java
 // 双指针法交换，太慢了
 class Solution {
@@ -637,6 +759,8 @@ class Solution {
 
 #### 剑指Offer 22（链表中倒数第 K 个结点）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170556134.png" alt="image-20201014170556134" style="zoom:200%;" />
+
 ```java
 // 典型的双指针问题
 class Solution {
@@ -657,6 +781,8 @@ class Solution {
 
 
 #### 剑指Offer 24（反转链表）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170627647.png" alt="image-20201014170627647" style="zoom:200%;" />
 
 ```java
 // 三指针法，需注意指针初始化为null
@@ -679,6 +805,8 @@ class Solution {
 
 
 #### 剑指Offer 25（合并有序链表）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170656633.png" alt="image-20201014170656633" style="zoom:200%;" />
 
 ```java
 // 链表类问题，设置dummyHead是一个常规操作，主要是为了避免讨论头节点，倒不一定是头节点丢失。
@@ -713,6 +841,8 @@ class Solution {
 
 #### 剑指Offer 26（树的子结构）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170729291.png" alt="image-20201014170729291" style="zoom:200%;" />
+
 ```java
 // 自己写不出啊
 class Solution {
@@ -732,6 +862,8 @@ class Solution {
 
 #### 剑指Offer 27（树的镜像）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170752272.png" alt="image-20201014170752272" style="zoom:200%;" />
+
 ```java
 // 递归，注意一下其他的方法，用栈或队列
 class Solution {
@@ -748,6 +880,8 @@ class Solution {
 
 
 #### 剑指Offer 28（树的对称）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170852957.png" alt="image-20201014170852957" style="zoom:200%;" />
 
 >做递归思考三步：
 >
@@ -791,6 +925,8 @@ class Solution {
 
 
 #### 剑指Offer 29（顺时针打印矩阵）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170933017.png" alt="image-20201014170933017" style="zoom:200%;" />
 
 ```java
 class Solution {
@@ -837,6 +973,8 @@ class Solution {
 
 #### 剑指Offer 30（包含 min 函数的栈）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171010705.png" alt="image-20201014171010705" style="zoom:200%;" />
+
 ```java
 class MinStack {
 
@@ -876,6 +1014,8 @@ class MinStack {
 
 #### 剑指Offer 31（栈的压入、弹出序列）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171035528.png" alt="image-20201014171035528" style="zoom:200%;" />
+
 ```java
 // 根据两个数组模拟栈的出入
 class Solution {
@@ -899,6 +1039,8 @@ class Solution {
 
 
 #### 剑指Offer 32-1（从上往下打印二叉树）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171101570.png" alt="image-20201014171101570" style="zoom:200%;" />
 
 ```java
 // 就一个层次遍历，不是很懂为什么是medium
@@ -929,6 +1071,8 @@ class Solution {
 
 
 #### 剑指Offer 32-2（把二叉树打印成多行）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171141555.png" alt="image-20201014171141555" style="zoom:200%;" />
 
 ```java
 // 自己的方法用了两个队列
@@ -962,6 +1106,8 @@ class Solution {
 
 
 #### 剑指Offer 32-3（按之字形顺序打印二叉树）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171218448.png" alt="image-20201014171218448" style="zoom:200%;" />
 
 ```java
 class Solution {
@@ -998,6 +1144,8 @@ class Solution {
 
 
 #### 剑指Offer 33（二叉搜索树的后序遍历序列）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171245044.png" alt="image-20201014171245044" style="zoom:200%;" />
 
 ```java
 // 单调栈
@@ -1043,6 +1191,8 @@ class Solution {
 
 #### 剑指Offer 34（树的路径和）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171316388.png" alt="image-20201014171316388" style="zoom:200%;" />
+
 ```java
 class Solution {
     public List<List<Integer>> pathSum(TreeNode root, int sum) {
@@ -1084,6 +1234,14 @@ class Solution {
 
 #### 剑指Offer 35（链表拷贝）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171639790.png" alt="image-20201014171639790" style="zoom:200%;" />
+
+>**提示：**
+>
+>- `-10000 <= Node.val <= 10000`
+>- `Node.random` 为空（null）或指向链表中的节点。
+>- 节点数目不超过 1000 。
+>
 >太菜了，没明白题意。
 >
 >浅拷贝只复制指向某个对象的指针，而不复制对象本身，新旧对象还是共享同一块内存。但深拷贝会另外创造一个一模一样的对象，新对象跟原对象不共享内
@@ -1115,6 +1273,8 @@ class Solution {
 
 
 #### 剑指Offer 36（二叉搜索树与双向链表）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171825377.png" alt="image-20201014171825377" style="zoom:200%;" />
 
 ```java
 /*
@@ -1230,6 +1390,8 @@ class Solution {
 
 #### 剑指Offer 37（序列化二叉树）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171909372.png" alt="image-20201014171909372" style="zoom:200%;" />
+
 ```java
 // 暂时放弃，但感觉可以写
 public class Codec {
@@ -1279,6 +1441,8 @@ public class Codec {
 
 #### 剑指Offer 38（不重复全排列）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171931035.png" alt="image-20201014171931035" style="zoom:200%;" />
+
 ```java
 class Solution {
     List<String> res = new ArrayList<>();
@@ -1314,6 +1478,8 @@ class Solution {
 
 #### 剑指Offer 39（ 数组中出现次数超过一半的数字）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171949854.png" alt="image-20201014171949854" style="zoom:200%;" />
+
 ```java
 class Solution {
     public int majorityElement(int[] nums) {
@@ -1327,6 +1493,8 @@ class Solution {
 
 
 #### 剑指Offer 40（最小的 K 个数）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172007776.png" alt="image-20201014172007776" style="zoom:200%;" />
 
 ```java
 // Arrays.sort()
@@ -1345,6 +1513,8 @@ class Solution {
 
 
 #### 剑指Offer 41（数据流中的中位数）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172027015.png" alt="image-20201014172027015" style="zoom:200%;" />
 
 ```java
 class MedianFinder {
@@ -1372,6 +1542,8 @@ class MedianFinder {
 
 #### 剑指Offer 42（连续子数组的最大和）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172048661.png" alt="image-20201014172048661" style="zoom:200%;" />
+
 ```java
 class Solution {
     public int maxSubArray(int[] nums) {
@@ -1391,6 +1563,8 @@ class Solution {
 
 
 #### 剑指Offer 43（1 ～n 整数中 1 出现的次数）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173835169.png" alt="image-20201014173835169" style="zoom:200%;" />
 
 ```java
 // 数学方法
@@ -1419,6 +1593,8 @@ class Solution {
 
 #### 剑指Offer 44（数字序列中的某一位数字）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172128075.png" alt="image-20201014172128075" style="zoom:200%;" />
+
 ```java
 // 找规律
 class Solution {
@@ -1442,6 +1618,8 @@ class Solution {
 
 #### 剑指Offer 45（把数组排成最小的数）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172236823.png" alt="image-20201014172236823" style="zoom:200%;" />
+
 ```java
 class Solution {
     public String minNumber(int[] nums) {
@@ -1464,6 +1642,8 @@ class Solution {
 
 #### 剑指Offer 46（把数字翻译成字符串）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172254704.png" alt="image-20201014172254704" style="zoom:200%;" />
+
 ```java
 // 熟记compareTo函数的使用
 class Solution {
@@ -1484,6 +1664,8 @@ class Solution {
 
 
 #### 剑指Offer 47（礼物的最大价值）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172316656.png" alt="image-20201014172316656" style="zoom:200%;" />
 
 ```java
 // 没用滚动数组
@@ -1569,6 +1751,8 @@ class Solution {
 
 #### 剑指Offer 48（最长不含重复字符的子字符串）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172336047.png" alt="image-20201014172336047" style="zoom:200%;" />
+
 ```java
 // 哈希表解法，滑动窗口
 class Solution {
@@ -1594,6 +1778,8 @@ class Solution {
 
 
 #### 剑指Offer 49（丑数）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172355281.png" alt="image-20201014172355281" style="zoom:200%;" />
 
 ```java
 class Solution {
@@ -1625,6 +1811,8 @@ class Solution {
 
 #### 剑指Offer 50（第一个只出现一次的字符位置）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172416738.png" alt="image-20201014172416738" style="zoom:200%;" />
+
 ```java
 class Solution {
     public char firstUniqChar(String s) {
@@ -1647,6 +1835,8 @@ class Solution {
 
 
 #### 剑指Offer 51（数组中的逆序对）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172435838.png" alt="image-20201014172435838" style="zoom:200%;" />
 
 ```java
 // 暴力超时
@@ -1758,6 +1948,8 @@ class Solution {
 
 #### 剑指Offer 52（相交链表）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172607853.png" alt="image-20201014172607853" style="zoom:200%;" />
+
 ```java
 public class Solution {
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
@@ -1782,6 +1974,8 @@ public class Solution {
 
 
 #### 剑指Offer 53 - 1（有序数组同一元素的个数）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172633886.png" alt="image-20201014172633886" style="zoom:200%;" />
 
 ```java
 class Solution {
@@ -1830,6 +2024,8 @@ class Solution {
 
 #### 剑指Offer 53 - 2（0～n-1中缺失的数字）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172655672.png" alt="image-20201014172655672" style="zoom:200%;" />
+
 ```java
 class Solution {
     public int missingNumber(int[] nums) {
@@ -1859,6 +2055,8 @@ class Solution {
 
 
 #### 剑指Offer 54（二叉搜索树的倒数第k大节点）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172714315.png" alt="image-20201014172714315" style="zoom:200%;" />
 
 ```java
 class Solution {
@@ -1916,6 +2114,8 @@ class Solution {
 
 #### 剑指Offer 55-1（树的深度）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172734049.png" alt="image-20201014172734049" style="zoom:200%;" />
+
 ```java
 // 递归法
 class Solution {
@@ -1951,6 +2151,8 @@ class Solution {
 
 #### 剑指Offer 55-2（树的平衡）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172758748.png" alt="image-20201014172758748" style="zoom:200%;" />
+
 ```java
 // 结合55-1的经典递归
 class Solution {
@@ -1973,6 +2175,8 @@ class Solution {
 
 
 #### 剑指Offer 56-1（数组中数字出现的次数）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172849111.png" alt="image-20201014172849111" style="zoom:200%;" />
 
 ```java
 // 哈希表 思路简单，可考虑位运算
@@ -1999,6 +2203,8 @@ class Solution {
 
 #### 剑指Offer 56-2（数组中数字出现的次数）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172910814.png" alt="image-20201014172910814" style="zoom:200%;" />
+
 ```java
 // 哈希表 思路简单，可考虑位运算
 class Solution {
@@ -2023,6 +2229,8 @@ class Solution {
 
 #### 剑指Offer 57-1（和为 S 的两个数字）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172931536.png" alt="image-20201014172931536" style="zoom:200%;" />
+
 ```java
 // 本题是有序的，可优化。可用双指针
 class Solution {
@@ -2045,6 +2253,8 @@ class Solution {
 
 
 #### 剑指Offer 57-2（和为 S 的连续正数序列）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014172953977.png" alt="image-20201014172953977" style="zoom:200%;" />
 
 ```java
 class Solution {
@@ -2083,6 +2293,8 @@ class Solution {
 
 #### 剑指Offer 58-1（翻转单词顺序）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173019306.png" alt="image-20201014173019306" style="zoom:200%;" />
+
 ```java
 class Solution {
     public String reverseWords(String s) {
@@ -2101,6 +2313,8 @@ class Solution {
 
 #### 剑指Offer 58-2（左旋转字符串）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173042336.png" alt="image-20201014173042336" style="zoom:200%;" />
+
 ```java
 class Solution {
     public String reverseLeftWords(String s, int n) {
@@ -2115,6 +2329,8 @@ class Solution {
 
 
 #### 剑指Offer 59-1（滑动窗口的最大值）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173102976.png" alt="image-20201014173102976" style="zoom:200%;" />
 
 ```java
 // 自己的太慢了
@@ -2147,6 +2363,8 @@ class Solution {
 
 
 #### 剑指Offer 59-2（队列的最大值）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173125311.png" alt="image-20201014173125311" style="zoom:200%;" />
 
 ```java
 // 定义数组解决
@@ -2186,6 +2404,8 @@ class MaxQueue {
 
 #### 剑指Offer 60（n 个骰子的点数）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173150666.png" alt="image-20201014173150666" style="zoom:200%;" />
+
 ```java
 // 搞不懂
 class Solution {
@@ -2218,6 +2438,8 @@ class Solution {
 
 #### 剑指Offer 61（扑克牌顺子）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173218649.png" alt="image-20201014173218649" style="zoom:200%;" />
+
 ```java
 class Solution {
     public boolean isStraight(int[] nums) {
@@ -2235,6 +2457,8 @@ class Solution {
 
 
 #### 剑指Offer 62（圆圈中最后剩下的数）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173240076.png" alt="image-20201014173240076" style="zoom:200%;" />
 
 ```java
 // 模拟做法，但是很慢
@@ -2271,6 +2495,8 @@ class Solution {
 
 #### 剑指Offer 63（股票的最大利润）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173306992.png" alt="image-20201014173306992" style="zoom:200%;" />
+
 ```java
 class Solution {
     public int maxProfit(int[] prices) {
@@ -2292,6 +2518,8 @@ class Solution {
 
 #### 剑指Offer 64（求 1+2+3+...+n）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173327235.png" alt="image-20201014173327235" style="zoom:200%;" />
+
 ```java
 class Solution {
     //Java 中，为构成语句，需加一个辅助布尔量 xx ，否则会报错；
@@ -2309,6 +2537,8 @@ class Solution {
 
 #### 剑指Offer 65（不用加减乘除做加法）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173348985.png" alt="image-20201014173348985" style="zoom:200%;" />
+
 ```java
 // 位运算真不会，得看
 class Solution {
@@ -2321,6 +2551,8 @@ class Solution {
 
 
 #### 剑指Offer 66（构建乘积数组）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173409698.png" alt="image-20201014173409698" style="zoom:200%;" />
 
 ```java
 // 双指针累乘
@@ -2358,6 +2590,8 @@ class Solution {
 
 #### 剑指Offer 67（把字符串转换成整数）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173506740.png" alt="image-20201014173506740" style="zoom:200%;" />
+
 ```java
 class Solution {
     public int strToInt(String str) {
@@ -2392,6 +2626,8 @@ class Solution {
 
 #### 剑指Offer 68-1（二叉搜索树最近公共父节点）
 
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173532816.png" alt="image-20201014173532816" style="zoom:200%;" />
+
 ```java
 class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
@@ -2414,6 +2650,8 @@ class Solution {
 
 
 #### 剑指Offer 68-2（二叉树最近公共父节点）
+
+<img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014173549293.png" alt="image-20201014173549293" style="zoom:200%;" />
 
 ```java
 class Solution {
