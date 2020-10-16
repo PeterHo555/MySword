@@ -37,7 +37,9 @@ public class MainTest {
 //        sword66.constructArr(new int[]{1,2,3,4,5});
 //        Sword43 sword43 = new Sword43();
 //        sword43.countDigitOne(25);
-        Sword60 sword60 = new Sword60();
-        sword60.twoSum(1);
+//        Sword60 sword60 = new Sword60();
+//        sword60.twoSum(1);
+
+
     }
 }

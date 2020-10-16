@@ -364,7 +364,7 @@ class Solution {
 
 
 
-#### 剑指Offer 12（矩阵单词查找）*
+#### 剑指Offer 12（矩阵单词查找）*#
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164858924.png" alt="image-20201014164858924" style="zoom:200%;" />
 
@@ -412,11 +412,39 @@ class Solution {
         return false;
     }
 }
+// 脱离IDE，简化传参
+class Solution {
+    int[][] di = new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
+    int row,col;
+    char[][] B;
+    String W;
+    boolean[][] vis;
+    public boolean exist(char[][] board, String word) {
+       if(board == null || board.length == 0) return false;
+       row=board.length; col=board[0].length; B=board; W=word; vis=new boolean[row][col];
+       for(int x=0; x<row; x++){
+           for(int y=0; y<col; y++){
+               if(dfs(0,x,y)) return true;
+           }
+       }
+       return false;
+    }
+    private boolean dfs(int curlen, int x, int y){
+        if(curlen == W.length()) return true;
+        if(x<0 || x>=row || y<0 || y>=col || vis[x][y] || W.charAt(curlen) != B[x][y]) return false;
+        vis[x][y] = true;
+        for(int[] d : di){
+            if(dfs(curlen+1, x+d[0],y+d[1])) return true;
+        }
+        vis[x][y] = false;
+        return false;
+    }
+}
 ```
 
 
 
-#### 剑指Offer 13（机器人的运动范围）
+#### 剑指Offer 13（机器人的运动范围）*#
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014164942265.png" alt="image-20201014164942265" style="zoom:200%;" />
 
@@ -454,16 +482,41 @@ class Solution {
         return sums;
     }
 }
+// 脱离IDE写，简化传参
+class Solution {
+    boolean[][] vis;
+    int M, N, K;
+    public int movingCount(int m, int n, int k) {
+        vis = new boolean[m][n];
+        M = m; N = n; K = k;
+        return dfs(0, 0);
+    }
+    private int dfs(int x, int y) {
+        int a = sums(x);
+        int b = sums(y);
+        if(x<0 || x>=M || y<0 || y>=N || K<a+b || vis[x][y]) return 0;
+        vis[x][y] = true;
+        return dfs(x+1, y) + dfs(x, y+1) + 1;
+    }
+    private int sums(int num){
+        int sum = 0;
+        while (num != 0){
+            sum += num%10;
+            num /= 10;
+        }
+        return sum;
+    }
+}
 ```
 
 
 
-#### 剑指Offer 14-1（剪绳子1）
+#### 剑指Offer 14-1（剪绳子1）*#
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014165023256.png" alt="image-20201014165023256" style="zoom:200%;" />
 
 ```java
-// 动态规划
+// 动态规划, 脱离IDE
 class Solution {
     public int cuttingRope(int n) {
         int[] dp = new int[n + 1];
@@ -513,9 +566,19 @@ class Solution {
 
 
 
-#### 剑指Offer 15（二进制中 1 的个数）
+#### 剑指Offer 15（二进制中 1 的个数）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014165429892.png" alt="image-20201014165429892" style="zoom:200%;" />
+
+>\>>表示右移，如果该数为正，则高位补0，若为负数，则高位补1；
+>
+>\>>>表示无符号右移，也叫逻辑右移，即若该数为正，则高位补0，而若该数为负数，则右移后高位同样补0。
+>
+>左移没有<<<运算符！
+>
+>负数二进制表达：
+>
+>等于其正数的反码+1（也叫补码，补码就是负数在计算机中的二进制表示方法）
 
 ```java
 // 位运算
@@ -531,11 +594,23 @@ class Solution {
         return count;
     }
 }
+// 脱离IDE
+class Solution {
+    // you need to treat n as an unsigned value
+    public int hammingWeight(int n) {
+        int ans = 0;
+        while (n != 0){
+            ans += n & 1;
+            n >>>= 1;
+        }
+        return ans;
+    }
+}
 
 class Solution {
     // you need to treat n as an unsigned value
     public int hammingWeight(int n) {
-        return Integer.bitCount(n);
+        r eturn Integer.bitCount(n);
     }
 }
 ```
@@ -578,7 +653,6 @@ class Solution {
         return res;
     }
 }
-
 ```
 
 
