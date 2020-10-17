@@ -635,7 +635,7 @@ class Solution {
     }
 }
 
-//
+// 快速幂
 class Solution {
     public double myPow(double x, int n) {
         if(x == 0) return 0;
@@ -657,7 +657,7 @@ class Solution {
 
 
 
-#### 剑指Offer 17（打印数组）
+#### 剑指Offer 17（打印数组）*#
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014165600290.png" alt="image-20201014165600290" style="zoom:200%;" />
 
@@ -673,11 +673,35 @@ class Solution {
         return ans;
     }
 }
+// 全排列，大数
+class Solution {
+    StringBuilder res;
+    int count = 0, n;
+    char[] num, loop = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    public String printNumbers(int n) {
+        this.n = n;
+        res = new StringBuilder(); // 数字字符串集
+        num = new char[n]; // 定义长度为 n 的字符列表
+        dfs(0); // 开启全排列递归
+        res.deleteCharAt(res.length() - 1); // 删除最后多余的逗号
+        return res.toString(); // 转化为字符串并返回
+    }
+    void dfs(int x) {
+        if(x == n) { // 终止条件：已固定完所有位
+            res.append(String.valueOf(num) + ","); // 拼接 num 并添加至 res 尾部，使用逗号隔开
+            return;
+        }
+        for(char i : loop) { // 遍历 ‘0‘ - ’9‘
+            num[x] = i; // 固定第 x 位为 i
+            dfs(x + 1); // 开启固定第 x + 1 位
+        }
+    }
+}
 ```
 
 
 
-#### 剑指Offer 18（在 O(1) 时间内删除链表节点）
+#### 剑指Offer 18（在 O(1) 时间内删除链表节点）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014165756220.png" alt="image-20201014165756220" style="zoom:200%;" />
 
@@ -796,7 +820,7 @@ class Solution {
 
 
 
-#### 剑指Offer 21（调整数组顺序使奇数位于偶数前面）
+#### 剑指Offer 21（调整数组顺序使奇数位于偶数前面）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170328402.png" alt="image-20201014170328402" style="zoom:200%;" />
 
@@ -827,11 +851,31 @@ class Solution {
         return num % 2 == 1;
     }
 }
+// 脱离IDE
+class Solution {
+    public int[] exchange(int[] nums) {
+        int l = 0, r = nums.length - 1;
+        while (l < r){
+            if (nums[l] % 2 == 1) {
+                l++;
+            } else if (nums[r] % 2 == 0) {
+                r--;
+            } else {
+                int temp = nums[r];
+                nums[r] = nums[l];
+                nums[l] = temp;
+                l++;
+                r--;
+            }
+        }
+        return nums;
+    }
+}
 ```
 
 
 
-#### 剑指Offer 22（链表中倒数第 K 个结点）
+#### 剑指Offer 22（链表中倒数第 K 个结点）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170556134.png" alt="image-20201014170556134" style="zoom:200%;" />
 
@@ -854,24 +898,32 @@ class Solution {
 
 
 
-#### 剑指Offer 24（反转链表）
+#### 剑指Offer 24（反转链表）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170627647.png" alt="image-20201014170627647" style="zoom:200%;" />
 
 ```java
-// 三指针法，需注意指针初始化为null
+// 三指针法，需注意指针初始化为null，迭代
 class Solution {
     public ListNode reverseList(ListNode head) {
-        ListNode pre = null;
-        ListNode cur = head;
-        ListNode next = null;
-        while (cur != null){
-            next = cur.next;
-            cur.next = pre;
-            pre = cur;
-            cur = next;            
+        ListNode pre = null, curr = head, next = null;
+        while(curr != null){
+            next = curr.next;
+            curr.next = pre;        
+            pre = curr;
+            curr = next;
         }
         return pre;
+    }
+}
+// 递归
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode newHead = reverseList(head.next);
+        head.next.next = head;
+        head.next = null;
+        return newHead;
     }
 }
 ```
@@ -909,6 +961,26 @@ class Solution {
         return dummyHead.next;
     }
 }
+//脱离IDE
+class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode head = new ListNode(-1), pre = head;
+        while(l1 != null && l2 != null){
+            if (l1.val < l2.val){
+                pre.next = l1;
+                pre = pre.next;
+                l1 = l1.next;
+            } else {
+                pre.next = l2;
+                pre = pre.next;
+                l2 = l2.next;
+            }
+        }
+        if(l1 != null) pre.next = l1;
+        if(l2 != null) pre.next = l2;
+        return head.next;
+    }
+}
 ```
 
 
@@ -934,7 +1006,7 @@ class Solution {
 
 
 
-#### 剑指Offer 27（树的镜像）
+#### 剑指Offer 27（树的镜像）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170752272.png" alt="image-20201014170752272" style="zoom:200%;" />
 
@@ -943,9 +1015,26 @@ class Solution {
 class Solution {
     public TreeNode mirrorTree(TreeNode root) {
         if (root == null) return null;
-        TreeNode tempLeft = root.left;//后面的操作会改变 left 指针，因此先保存下来
-        root.left = mirrorTree(root.right);
-        root.right = mirrorTree(tempLeft);
+        TreeNode leftRoot = mirrorTree(root.right);
+        TreeNode rightRoot = mirrorTree(root.left);
+        root.left = leftRoot;
+        root.right = rightRoot;
+        return root;
+    }
+}
+// 辅助栈
+class Solution {
+    public TreeNode mirrorTree(TreeNode root) {
+        if(root == null) return null;
+        Stack<TreeNode> stack = new Stack<>() {{ add(root); }};
+        while(!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            if(node.left != null) stack.add(node.left);
+            if(node.right != null) stack.add(node.right);
+            TreeNode tmp = node.left;
+            node.left = node.right;
+            node.right = tmp;
+        }
         return root;
     }
 }
@@ -953,7 +1042,7 @@ class Solution {
 
 
 
-#### 剑指Offer 28（树的对称）
+#### 剑指Offer 28（树的对称）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170852957.png" alt="image-20201014170852957" style="zoom:200%;" />
 
@@ -998,7 +1087,7 @@ class Solution {
 
 
 
-#### 剑指Offer 29（顺时针打印矩阵）
+#### 剑指Offer 29（顺时针打印矩阵）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014170933017.png" alt="image-20201014170933017" style="zoom:200%;" />
 
@@ -1039,6 +1128,33 @@ class Solution {
             c = nextC;
         }
         return res;
+    }
+}
+// 脱离IDE
+class Solution {
+    int[][] d = {{0,1}, {1,0}, {0, -1}, {-1, 0}};// 顺序不能错，右，下，左，上
+    public int[] spiralOrder(int[][] matrix) {
+        int m = matrix.length;
+        if (m == 0) return new int[0];
+        int n = matrix[0].length;
+        boolean[][] vis = new boolean[m][n];
+        int index = 0, r = 0, c = 0;
+        int[] ans = new int[m * n];
+        int dir = 0;
+        while(index < m * n){
+            ans[index++] = matrix[r][c];
+            vis[r][c] = true;
+            int nextR = r + d[dir % 4][0];
+            int nextC = c + d[dir % 4][1];
+            if(nextR == m || nextC == n || nextR < 0 || nextC < 0 || vis[nextR][nextC]){
+                dir++;
+                nextR = r + d[dir % 4][0];
+                nextC = c + d[dir % 4][1];
+            }
+            r = nextR;
+            c = nextC;
+        }
+        return ans;
     }
 }
 ```
