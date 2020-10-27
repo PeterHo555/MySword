@@ -1161,7 +1161,7 @@ class Solution {
 
 
 
-#### 剑指Offer 30（包含 min 函数的栈）
+#### 剑指Offer 30（包含 min 函数的栈）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171010705.png" alt="image-20201014171010705" style="zoom:200%;" />
 
@@ -1180,7 +1180,7 @@ class MinStack {
         dataStack.add(x);
         // 若最小值栈为空 或者
         // 加入的值小于等于当前最小值，添加最小值
-        if(minStack.empty() || minStack.peek() >= x)
+        if(minStack.isEmpty() || minStack.peek() >= x)
             minStack.add(x);
     }
 
@@ -1198,11 +1198,43 @@ class MinStack {
         return minStack.peek();
     }
 }
+// 脱离IDE
+class MinStack {
+    Stack<Integer> dataStack, minStack;
+
+    /** initialize your data structure here. */
+    public MinStack() {
+        dataStack = new Stack<>();
+        minStack = new Stack<>();
+    }
+    
+    public void push(int x) {
+        dataStack.push(x);
+        if(minStack.isEmpty() || minStack.peek() >= x)
+            minStack.push(x);
+    }
+    
+    public void pop() {
+      // 此处必须用equals，null和null都是undefine不相等
+        if(dataStack.peek().equals(minStack.peek())){
+            minStack.pop();
+        }
+        dataStack.pop();
+    }
+    
+    public int top() {
+        return dataStack.peek();
+    }
+    
+    public int min() {
+        return minStack.peek();
+    }
+}
 ```
 
 
 
-#### 剑指Offer 31（栈的压入、弹出序列）
+#### 剑指Offer 31（栈的压入、弹出序列）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171035528.png" alt="image-20201014171035528" style="zoom:200%;" />
 
@@ -1228,7 +1260,7 @@ class Solution {
 
 
 
-#### 剑指Offer 32-1（从上往下打印二叉树）
+#### 剑指Offer 32-1（从上往下打印二叉树）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171101570.png" alt="image-20201014171101570" style="zoom:200%;" />
 
@@ -1249,6 +1281,7 @@ class Solution {
                 queue.add(node.right);
             ansList.add(node.val);
         }
+      	// 记住是size()
         int[] ans = new int[ansList.size()];
         for (int i = 0; i < ansList.size(); i++) {
             ans[i] = ansList.get(i);
@@ -1260,7 +1293,7 @@ class Solution {
 
 
 
-#### 剑指Offer 32-2（把二叉树打印成多行）
+#### 剑指Offer 32-2（把二叉树打印成多行）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171141555.png" alt="image-20201014171141555" style="zoom:200%;" />
 
@@ -1291,11 +1324,31 @@ class Solution {
         return ansList;
     }
 }
+// 脱离IDE
+class Solution {
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if(root == null) return ans;
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while(!queue.isEmpty()){
+            List<Integer> temp = new ArrayList<>();
+            for(int i = queue.size(); i > 0; i--){
+                TreeNode node = queue.poll();
+                temp.add(node.val);
+                if(node.left != null) queue.add(node.left);
+                if(node.right != null) queue.add(node.right);
+            }
+            ans.add(new ArrayList<>(temp));
+        }
+        return ans;
+    }
+}
 ```
 
 
 
-#### 剑指Offer 32-3（按之字形顺序打印二叉树）
+#### 剑指Offer 32-3（按之字形顺序打印二叉树）*
 
 <img src="/Users/macbook/Library/Application Support/typora-user-images/image-20201014171218448.png" alt="image-20201014171218448" style="zoom:200%;" />
 
@@ -1327,6 +1380,31 @@ class Solution {
             Collections.reverse(ansList.get(i));
         }
         return ansList;
+    }
+}
+
+// 脱离IDE
+class Solution {
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if(root == null) return ans;
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while(!queue.isEmpty()){
+            List<Integer> temp = new ArrayList<>();
+            for(int i = queue.size(); i > 0; i--){
+                TreeNode node = queue.poll();
+                temp.add(node.val);
+                if(node.left != null) queue.add(node.left);
+                if(node.right != null) queue.add(node.right);
+            }
+            ans.add(new ArrayList<>(temp));
+        }
+        // 与上一题的主要区别
+        for(int i = 1; i < ans.size(); i += 2){
+            Collections.reverse(ans.get(i));
+        }
+        return ans;
     }
 }
 ```
@@ -1416,6 +1494,25 @@ class Solution {
         // 我们要理解递归的本质，当递归往下传递的时候他最后还是会往回走，
         // 我们把这个值使用完之后还要把它给移除，这就是回溯
         list.remove(list.size() - 1);
+    }
+}
+// 路飞
+class Solution {
+    LinkedList<List<Integer>> res = new LinkedList<>();
+    LinkedList<Integer> path = new LinkedList<>(); 
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        recur(root, sum);
+        return res;
+    }
+    void recur(TreeNode root, int tar) {
+        if(root == null) return;
+        path.add(root.val);
+        tar -= root.val;
+        if(tar == 0 && root.left == null && root.right == null)
+            res.add(new LinkedList(path));
+        recur(root.left, tar);
+        recur(root.right, tar);
+        path.removeLast();
     }
 }
 ```

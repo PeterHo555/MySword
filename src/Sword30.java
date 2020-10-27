@@ -13,7 +13,7 @@ public class Sword30 {
         dataStack.add(x);
         // 若最小值栈为空 或者
         // 加入的值小于等于当前最小值，添加最小值
-        if(minStack.empty() || minStack.peek() >= x)
+        if(minStack.isEmpty() || minStack.peek() >= x)
             minStack.add(x);
     }
 
